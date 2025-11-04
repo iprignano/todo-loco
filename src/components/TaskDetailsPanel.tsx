@@ -6,16 +6,6 @@ export function TaskDetailsPanel({ taskId, onClose }: { taskId: string; onClose:
   const { state, taskById, updateTask, deleteTask, moveTask } = useBoardContext();
   const task = taskById(taskId);
 
-  const [localTitle, setLocalTitle] = useState(task?.title);
-  const [localDesc, setLocalDesc] = useState(task?.description);
-  const [localPriority, setLocalPriority] = useState<Priority | ''>(task?.priority ?? '');
-
-  useEffect(() => {
-    setLocalTitle(task?.title);
-    setLocalDesc(task?.description ?? '');
-    setLocalPriority((task?.priority ?? '') as Priority | '');
-  }, [task]);
-
   const currentColumn: ColumnId | undefined = useMemo(() => {
     if (!state?.activeBoardId) return undefined;
     const bId = state.activeBoardId;
@@ -27,13 +17,6 @@ export function TaskDetailsPanel({ taskId, onClose }: { taskId: string; onClose:
   }, [state, taskId]);
 
   if (!task || !state) return null;
-
-  function save() {
-    const updates: any = { description: localDesc, priority: localPriority || undefined };
-    const t = localTitle?.trim();
-    if (t) updates.title = t;
-    updateTask(taskId, updates);
-  }
 
   function handleMove(toCol: ColumnId) {
     if (!state?.activeBoardId || !currentColumn) return;
@@ -48,7 +31,7 @@ export function TaskDetailsPanel({ taskId, onClose }: { taskId: string; onClose:
   }
 
   return (
-    <aside className="fixed right-0 top-0 z-20 h-full w-full max-w-md border-l bg-white shadow-xl">
+    <aside className="fixed right-0 top-0 z-20 h-full w-full max-w-lg border-l bg-white shadow-xl">
       <div className="flex items-center justify-between border-b px-4 py-3">
         <h3 className="text-sm font-semibold text-gray-700">Task details</h3>
         <button onClick={onClose} className="rounded border px-2 py-1 text-xs">
@@ -60,39 +43,19 @@ export function TaskDetailsPanel({ taskId, onClose }: { taskId: string; onClose:
           <label className="text-xs text-gray-600">Title</label>
           <input
             className="w-full rounded border px-3 py-2 text-sm"
-            value={localTitle}
-            onChange={(e) => setLocalTitle(e.target.value)}
+            value={task.title}
+            onChange={(e) => updateTask(taskId, { title: e.target.value })}
           />
         </div>
         <div className="space-y-1">
           <label className="text-xs text-gray-600">Description</label>
           <textarea
             className="min-h-[120px] w-full resize-y rounded border px-3 py-2 text-sm"
-            value={localDesc}
-            onChange={(e) => setLocalDesc(e.target.value)}
+            value={task.description}
+            onChange={(e) => updateTask(taskId, { description: e.target.value })}
           />
         </div>
-        <div className="space-y-1">
-          <label className="text-xs text-gray-600">Priority</label>
-          <select
-            className="rounded border px-2 py-2 text-sm"
-            value={localPriority}
-            onChange={(e) => setLocalPriority((e.target.value || '') as Priority | '')}
-          >
-            <option value="">No priority</option>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
-          </select>
-        </div>
-        <div className="flex items-center gap-2 pt-2">
-          <button
-            className="rounded bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-            onClick={save}
-          >
-            Save changes
-          </button>
-          <div className="ml-auto" />
+        <div className="flex items-center justify-between space-y-1">
           <select
             className="rounded border px-2 py-2 text-sm"
             value={currentColumn ?? ''}
@@ -102,6 +65,22 @@ export function TaskDetailsPanel({ taskId, onClose }: { taskId: string; onClose:
             <option value="inProgress">In progress</option>
             <option value="done">Done</option>
           </select>
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-gray-600">Priority</label>
+            <select
+              className="rounded border px-2 py-2 text-sm"
+              value={task.priority}
+              onChange={(e) => updateTask(taskId, { priority: e.target.value as Priority })}
+            >
+              <option value="">No priority</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 pt-2">
+          <div className="ml-auto" />
           <button
             className="rounded border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700"
             onClick={() => {
