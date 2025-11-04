@@ -14,16 +14,14 @@ import {
 } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { BoardSwitcher } from './BoardSwitcher';
-import { useBoards } from '../state/useBoards';
+import { useBoardContext } from '../lib/context/useBoardContext';
 import { Column } from './Column';
 import { TaskCard } from './TaskCard';
 import type { Task } from '../types';
 
 export function Board({ onSelectTask }: { onSelectTask?: (taskId: string) => void }) {
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
-  const { activeBoard, state, saveState, moveTask, tasksByColumn, taskById } = useBoards({
-    isDraggingTask: Boolean(draggedTaskId),
-  });
+  const { activeBoard, state, saveState, moveTask, tasksByColumn, taskById } = useBoardContext();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -106,9 +104,9 @@ export function Board({ onSelectTask }: { onSelectTask?: (taskId: string) => voi
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
-        onDragEnd={handleDragEnd}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {activeBoard.columns.map((colId) => (

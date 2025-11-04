@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { SCHEMA_VERSION } from '../types';
-import { generateId } from '../lib/id';
-import { loadState, saveStateDebounced } from '../lib/storage';
-import type { Board, BoardState, ColumnId, Priority, Task } from '../types';
+import { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { SCHEMA_VERSION } from '../../types';
+import { generateId } from '../../lib/id';
+import { loadState, saveStateDebounced } from '../../lib/storage';
+import type { Board, BoardState, ColumnId, Priority, Task } from '../../types';
 
 const DEFAULT_COLUMNS: ColumnId[] = ['backlog', 'inProgress', 'done'];
 
@@ -20,7 +20,7 @@ function createEmptyState(): BoardState {
   };
 }
 
-export function useBoards(args?: { isDraggingTask?: boolean }) {
+export const createBoardContext = (args?: { isDraggingTask?: boolean }) => {
   const [state, setState] = useState<BoardState | null>(null);
   const initializedRef = useRef(false);
 
@@ -229,4 +229,7 @@ export function useBoards(args?: { isDraggingTask?: boolean }) {
     tasksByColumn,
     taskById,
   } as const;
-}
+};
+
+type BoardsContextValue = ReturnType<typeof createBoardContext> | null;
+export const BoardContext = createContext<BoardsContextValue>(null);

@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import { useBoardContext } from '../lib/context/useBoardContext';
 import type { ColumnId, Priority } from '../types';
-import { useBoards } from '../state/useBoards';
 
 export function NewTaskForm({ columnId }: { columnId: ColumnId }) {
-  const { createTask } = useBoards();
+  const { createTask } = useBoardContext();
   const [title, setTitle] = useState('');
   const [priority, setPriority] = useState<Priority | ''>('');
 

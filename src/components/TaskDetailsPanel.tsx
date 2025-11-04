@@ -1,24 +1,20 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useBoardContext } from '../lib/context/useBoardContext';
 import type { ColumnId, Priority } from '../types';
-import { useBoards } from '../state/useBoards';
 
 export function TaskDetailsPanel({ taskId, onClose }: { taskId: string; onClose: () => void }) {
-  const { state, updateTask, deleteTask, moveTask } = useBoards();
-  const task = state?.tasks[taskId];
+  const { state, taskById, updateTask, deleteTask, moveTask } = useBoardContext();
+  const task = taskById(taskId);
 
-  const [localTitle, setLocalTitle] = useState('');
-  const [localDesc, setLocalDesc] = useState('');
-  const [localPriority, setLocalPriority] = useState<Priority | ''>('');
-  // Sync local fields when task changes
-  if (task && localTitle === '' && localDesc === '' && localPriority === '') {
-    // naive sync on first render for the given taskId
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    Promise.resolve().then(() => {
-      setLocalTitle(task.title);
-      setLocalDesc(task.description ?? '');
-      setLocalPriority((task.priority ?? '') as Priority | '');
-    });
-  }
+  const [localTitle, setLocalTitle] = useState(task?.title);
+  const [localDesc, setLocalDesc] = useState(task?.description);
+  const [localPriority, setLocalPriority] = useState<Priority | ''>(task?.priority ?? '');
+
+  useEffect(() => {
+    setLocalTitle(task?.title);
+    setLocalDesc(task?.description ?? '');
+    setLocalPriority((task?.priority ?? '') as Priority | '');
+  }, [task]);
 
   const currentColumn: ColumnId | undefined = useMemo(() => {
     if (!state?.activeBoardId) return undefined;
@@ -34,7 +30,7 @@ export function TaskDetailsPanel({ taskId, onClose }: { taskId: string; onClose:
 
   function save() {
     const updates: any = { description: localDesc, priority: localPriority || undefined };
-    const t = localTitle.trim();
+    const t = localTitle?.trim();
     if (t) updates.title = t;
     updateTask(taskId, updates);
   }

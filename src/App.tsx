@@ -1,4 +1,5 @@
-import BoardArea from './components/BoardArea';
+import { BoardArea } from './components/BoardArea';
+import { BoardContextProvider } from './components/BoardContextProvider';
 
 export default function App() {
   return (
@@ -9,7 +10,9 @@ export default function App() {
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-10">
-        <BoardArea />
+        <BoardContextProvider>
+          <BoardArea />
+        </BoardContextProvider>
       </main>
     </div>
   );

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Board } from './Board';
 import { TaskDetailsPanel } from './TaskDetailsPanel';
 
-function BoardArea() {
+export function BoardArea() {
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   return (
     <div className="relative space-y-6">
@@ -13,5 +13,3 @@ function BoardArea() {
     </div>
   );
 }
-
-export default BoardArea;

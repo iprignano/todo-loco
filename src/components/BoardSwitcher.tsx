@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useBoards } from '../state/useBoards';
+import { useBoardContext } from '../lib/context/useBoardContext';
 
 export function BoardSwitcher() {
-  const { state, activeBoard, setActiveBoard, createBoard, renameBoard, deleteBoard } = useBoards();
+  const { state, activeBoard, setActiveBoard, createBoard, renameBoard, deleteBoard } =
+    useBoardContext();
   const [newName, setNewName] = useState('');
 
   if (!state || !activeBoard) return null;
