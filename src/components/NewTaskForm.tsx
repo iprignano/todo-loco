@@ -40,7 +40,7 @@ export function NewTaskForm({ columnId }: { columnId: ColumnId }) {
         </select>
         <button
           type="submit"
-          className="rounded bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          className="rounded bg-blue-800 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
         >
           Add
         </button>

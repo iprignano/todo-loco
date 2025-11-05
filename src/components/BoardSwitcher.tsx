@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useBoardContext } from '../lib/context/useBoardContext';
 
 export function BoardSwitcher() {
@@ -20,9 +20,15 @@ export function BoardSwitcher() {
     }
   }, []);
 
+  const handleNewBoardSubmit = useCallback((evt: FormEvent, newBoardName: string) => {
+    evt.preventDefault();
+    createBoard(newBoardName);
+    closePanel();
+  }, []);
+
   useEffect(() => {
     document.addEventListener('click', handleClick);
-    () => document.removeEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
   }, [handleClick]);
 
   if (!state || !activeBoard) return null;
@@ -38,7 +44,7 @@ export function BoardSwitcher() {
         }}
       >
         <h2 className="text-lg font-semibold">{activeBoard.name}</h2>
-        <span className="opacity-50 group-hover:opacity-100 transition-opacity duration-100">
+        <span className="opacity-50 group-hover:opacity-100 transition-opacity duration-100 pointer-events-none">
           <CaretDownIcon />
         </span>
       </button>
@@ -57,26 +63,28 @@ export function BoardSwitcher() {
             </div>
           ))}
           {isAddingNewBoard ? (
-            <div className="flex gap-2 items-center px-3 py-2 hover:bg-gray-50 border-t border-gray-200">
-              <input
-                type="text"
-                id="newBoardName"
-                placeholder="My new board"
-                className="focus:outline-none bg-transparent"
-                autoFocus
-                onChange={(evt) => setNewName(evt.target.value)}
-                value={newName}
-              />
-              <button
-                type="button"
-                className="rounded bg-blue-800 px-2 py-1 text-xs font-medium text-white"
-                onClick={() => {
-                  createBoard(newName);
-                  closePanel();
-                }}
+            <div className="hover:bg-gray-50 border-t border-gray-200">
+              <form
+                className="flex gap-2 items-center px-3 py-2"
+                onSubmit={(evt) => handleNewBoardSubmit(evt, newName)}
               >
-                Add
-              </button>
+                <input
+                  type="text"
+                  id="newBoardName"
+                  placeholder="My new board"
+                  className="focus:outline-none bg-transparent"
+                  autoFocus
+                  onChange={(evt) => setNewName(evt.target.value)}
+                  value={newName}
+                />
+                <button
+                  disabled={newName === ''}
+                  type="submit"
+                  className="rounded bg-blue-800 px-2 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
+                >
+                  Add
+                </button>
+              </form>
             </div>
           ) : (
             <div
@@ -85,7 +93,10 @@ export function BoardSwitcher() {
                 setIsAddingNewBoard(true);
               }}
             >
-              New board <PlusCircleIcon />
+              New board{' '}
+              <span className="pointer-events-none">
+                <PlusCircleIcon />
+              </span>
             </div>
           )}
         </div>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useBoardContext } from '../lib/context/useBoardContext';
 
 export function BoardSettings() {
@@ -20,9 +20,17 @@ export function BoardSettings() {
     }
   }, []);
 
+  const handleBoardRename = useCallback((evt: FormEvent, newBoardName: string) => {
+    evt.preventDefault();
+    if (newBoardName === '') return;
+
+    renameBoard(activeBoard?.id!, newBoardName);
+    closePanel();
+  }, []);
+
   useEffect(() => {
     document.addEventListener('click', handleClick);
-    () => document.removeEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
   }, [handleClick]);
 
   if (!state || !activeBoard) return null;
@@ -44,26 +52,32 @@ export function BoardSettings() {
       {isPanelOpen && (
         <div className="absolute top-10 right-0 cursor-pointer bg-white border border-gray-300 rounded-lg min-w-56 shadow-sm overflow-hidden">
           {isRenamingBoard ? (
-            <div className="flex gap-2 items-center px-3 py-2 hover:bg-gray-50">
-              <input
-                type="text"
-                id="renameBoardName"
-                placeholder="Your new name"
-                className="focus:outline-none bg-transparent"
-                autoFocus
-                onChange={(evt) => setNewName(evt.target.value)}
-                value={newName}
-              />
-              <button
-                type="button"
-                className="rounded bg-blue-800 px-2 py-1 text-xs font-medium text-white"
-                onClick={() => {
-                  renameBoard(activeBoard.id, newName);
-                  closePanel();
-                }}
+            <div className="px-3 py-2 hover:bg-gray-50">
+              <form
+                className="flex gap-2 items-center"
+                onSubmit={(evt) => handleBoardRename(evt, newName)}
               >
-                Rename
-              </button>
+                <input
+                  type="text"
+                  id="renameBoardName"
+                  placeholder="Your new name"
+                  className="focus:outline-none bg-transparent"
+                  autoFocus
+                  onChange={(evt) => setNewName(evt.target.value)}
+                  value={newName}
+                />
+                <button
+                  disabled={newName === ''}
+                  type="submit"
+                  className="rounded bg-blue-800 px-2 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
+                  onClick={() => {
+                    renameBoard(activeBoard.id, newName);
+                    closePanel();
+                  }}
+                >
+                  Rename
+                </button>
+              </form>
             </div>
           ) : (
             <div
