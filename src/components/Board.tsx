@@ -17,6 +17,7 @@ import { BoardSwitcher } from './BoardSwitcher';
 import { useBoardContext } from '../lib/context/useBoardContext';
 import { Column } from './Column';
 import { TaskCard } from './TaskCard';
+import { LoadingSkeleton } from './LoadingSkeleton';
 import type { Task } from '../types';
 
 export function Board({ onSelectTask }: { onSelectTask?: (taskId: string) => void }) {
@@ -29,7 +30,7 @@ export function Board({ onSelectTask }: { onSelectTask?: (taskId: string) => voi
   );
 
   if (!activeBoard) {
-    return <div className="text-center text-gray-600">Loading board…</div>;
+    return <LoadingSkeleton />;
   }
 
   const handleDragEnd = (_: DragEndEvent) => {
