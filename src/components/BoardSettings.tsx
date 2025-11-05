@@ -3,7 +3,7 @@ import { useBoardContext } from '../lib/context/useBoardContext';
 
 export function BoardSettings() {
   const { state, activeBoard, renameBoard, deleteBoard } = useBoardContext();
-  const wrapperElId = 'boardSwitcher';
+  const wrapperElId = 'boardSettings';
   const [newName, setNewName] = useState('');
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isRenamingBoard, setIsRenamingBoard] = useState(false);
@@ -38,14 +38,14 @@ export function BoardSettings() {
   return (
     <div id={wrapperElId} className="relative">
       <button
-        className={`cursor-pointer ${!isPanelOpen && 'opacity-50'} hover:opacity-100 transition-opacity duration-200`}
+        className={`cursor-pointer hover:opacity-100 transition-opacity duration-200 ${!isPanelOpen ? 'opacity-50' : ''}`}
         onClick={() => {
           setIsPanelOpen((isOpen) => !isOpen);
           setIsRenamingBoard(false);
           setNewName('');
         }}
       >
-        <span className=" group-hover:opacity-100 transition-opacity duration-100">
+        <span className="group-hover:opacity-100 transition-all duration-100">
           <CogIcon />
         </span>
       </button>

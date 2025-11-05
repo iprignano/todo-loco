@@ -28,7 +28,7 @@ export function TaskCard({ task, onSelect }: { task: Task; onSelect?: (taskId: s
       type="button"
       style={style}
       ref={setNodeRef}
-      className="w-full rounded-md border bg-white p-3 text-left shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      className="w-full rounded-md border bg-white p-3 text-left shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
       {...listeners}
       onClick={() => onSelect?.(task.id)}
     >

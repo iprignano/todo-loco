@@ -1,5 +1,8 @@
-
-import { defaultAnimateLayoutChanges, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import {
+  defaultAnimateLayoutChanges,
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { TaskCard } from './TaskCard';
 import { NewTaskForm } from './NewTaskForm';
@@ -12,7 +15,7 @@ const LABELS: Record<ColumnId, string> = {
 };
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
-  defaultAnimateLayoutChanges({...args, wasDragging: true});
+  defaultAnimateLayoutChanges({ ...args, wasDragging: true });
 
 export function Column({
   columnId,
@@ -37,14 +40,19 @@ export function Column({
           strategy={verticalListSortingStrategy}
         >
           <div className="flex flex-col gap-2">
+            {tasks.length === 0 && (
+              <div className="text-gray-400 text-center py-3">Nothing here 🤪</div>
+            )}
             {tasks.map((t) => (
               <TaskCard key={t.id} task={t} onSelect={onSelectTask} />
             ))}
           </div>
         </SortableContext>
-        <div className="mt-3 pt-3 border-t">
-          <NewTaskForm columnId={columnId} />
-        </div>
+        {columnId === 'backlog' && (
+          <div className="mt-3 pt-3 border-t">
+            <NewTaskForm columnId={columnId} />
+          </div>
+        )}
       </div>
     </section>
   );

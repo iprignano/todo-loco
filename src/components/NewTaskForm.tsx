@@ -23,14 +23,14 @@ export function NewTaskForm({ columnId }: { columnId: ColumnId }) {
         placeholder="Add a task title…"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="w-full rounded border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="w-full rounded border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         aria-label="Task title"
       />
       <div className="flex items-center gap-2">
         <select
           value={priority}
           onChange={(e) => setPriority((e.target.value || '') as Priority | '')}
-          className="rounded border px-2 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="rounded border px-2 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           aria-label="Priority"
         >
           <option value="">No priority</option>
