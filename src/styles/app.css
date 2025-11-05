@@ -1,0 +1,16 @@
+.logo-link {
+  display: inline-block;
+  width: 50px;
+  height: 30px;
+  background: url(../assets/logo-bw.svg);
+  background-repeat: no-repeat;
+  opacity: 0.3;
+  transition: all 300ms ease;
+}
+
+.logo-link:hover {
+  background: url(../assets/logo-colour.svg);
+  background-repeat: no-repeat;
+  opacity: 1;
+  transition: all 100ms ease;
+}
