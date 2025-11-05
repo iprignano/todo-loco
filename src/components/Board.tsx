@@ -19,6 +19,7 @@ import { Column } from './Column';
 import { TaskCard } from './TaskCard';
 import { LoadingSkeleton } from './LoadingSkeleton';
 import type { Task } from '../types';
+import { BoardSettings } from './BoardSettings';
 
 export function Board({ onSelectTask }: { onSelectTask?: (taskId: string) => void }) {
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
@@ -99,8 +100,8 @@ export function Board({ onSelectTask }: { onSelectTask?: (taskId: string) => voi
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">{activeBoard.name}</h2>
         <BoardSwitcher />
+        <BoardSettings />
       </div>
       <DndContext
         sensors={sensors}
