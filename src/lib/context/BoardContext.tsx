@@ -44,6 +44,10 @@ export const createBoardContext = (args?: { isDraggingTask?: boolean }) => {
     saveStateDebounced(state);
   }, [state]);
 
+  useEffect(() => {
+    document.title = `[tl] ${activeBoard?.name}`;
+  }, [state?.activeBoardId]);
+
   const saveState = () => {
     saveStateDebounced(state);
   };
