@@ -18,12 +18,12 @@ import { useBoardContext } from '../lib/context/useBoardContext';
 import { Column } from './Column';
 import { TaskCard } from './TaskCard';
 import { LoadingSkeleton } from './LoadingSkeleton';
-import type { Task } from '../types';
 import { BoardSettings } from './BoardSettings';
+import type { Task } from '../types';
 
 export function Board({ onSelectTask }: { onSelectTask?: (taskId: string) => void }) {
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
-  const { activeBoard, state, saveState, moveTask, tasksByColumn, taskById } = useBoardContext();
+  const { activeBoard, state, moveTask, tasksByColumn, taskById } = useBoardContext();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -34,9 +34,12 @@ export function Board({ onSelectTask }: { onSelectTask?: (taskId: string) => voi
     return <LoadingSkeleton />;
   }
 
-  const handleDragEnd = (_: DragEndEvent) => {
-    setDraggedTaskId(null);
-    saveState();
+  const handleDragStart = (event: DragStartEvent) => {
+    const activeId = event.active.id as string;
+    if (!activeId.startsWith('task:')) return;
+
+    const taskId = activeId.replace('task:', '');
+    setDraggedTaskId(taskId);
   };
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -89,12 +92,8 @@ export function Board({ onSelectTask }: { onSelectTask?: (taskId: string) => voi
     );
   };
 
-  const handleDragStart = (event: DragStartEvent) => {
-    const activeId = event.active.id as string;
-    if (!activeId.startsWith('task:')) return;
-
-    const taskId = activeId.replace('task:', '');
-    setDraggedTaskId(taskId);
+  const handleDragEnd = (_: DragEndEvent) => {
+    setDraggedTaskId(null);
   };
 
   return (

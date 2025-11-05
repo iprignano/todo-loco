@@ -9,9 +9,9 @@ export function NewTaskForm({ columnId }: { columnId: ColumnId }) {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const trimmed = title.trim();
-    if (!trimmed) return;
-    createTask(columnId, trimmed, priority || undefined);
+    const trimmedTitle = title.trim();
+    if (!trimmedTitle) return;
+    createTask(columnId, trimmedTitle, priority || undefined);
     setTitle('');
     setPriority('');
   }

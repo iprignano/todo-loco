@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useBoardContext } from '../lib/context/useBoardContext';
 import type { ColumnId, Priority } from '../types';
 
@@ -8,11 +8,12 @@ export function TaskDetailsPanel({ taskId, onClose }: { taskId: string; onClose:
 
   const currentColumn: ColumnId | undefined = useMemo(() => {
     if (!state?.activeBoardId) return undefined;
-    const bId = state.activeBoardId;
-    const cols = state.tasksByBoard[bId];
+    const cols = state.tasksByBoard[state.activeBoardId];
+
     if (cols.backlog.includes(taskId)) return 'backlog';
     if (cols.inProgress.includes(taskId)) return 'inProgress';
     if (cols.done.includes(taskId)) return 'done';
+
     return undefined;
   }, [state, taskId]);
 
@@ -51,7 +52,7 @@ export function TaskDetailsPanel({ taskId, onClose }: { taskId: string; onClose:
           <label className="text-xs text-gray-600">Description</label>
           <textarea
             className="min-h-[120px] w-full resize-y rounded border px-3 py-2 text-sm"
-            value={task.description}
+            value={task.description ?? ''}
             onChange={(e) => updateTask(taskId, { description: e.target.value })}
           />
         </div>
@@ -69,7 +70,7 @@ export function TaskDetailsPanel({ taskId, onClose }: { taskId: string; onClose:
             <label className="text-xs text-gray-600">Priority</label>
             <select
               className="rounded border px-2 py-2 text-sm"
-              value={task.priority}
+              value={task.priority ?? ''}
               onChange={(e) => updateTask(taskId, { priority: e.target.value as Priority })}
             >
               <option value="">No priority</option>

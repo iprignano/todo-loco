@@ -20,7 +20,7 @@ function createEmptyState(): BoardState {
   };
 }
 
-export const createBoardContext = (args?: { isDraggingTask?: boolean }) => {
+export const createBoardContext = () => {
   const [state, setState] = useState<BoardState | null>(null);
   const initializedRef = useRef(false);
 
@@ -37,15 +37,14 @@ export const createBoardContext = (args?: { isDraggingTask?: boolean }) => {
     })();
   }, []);
 
-  // Persist whenever state changes,
-  // except when a card is being dragged around
+  // Persist on every change
   useEffect(() => {
-    if (!state || args?.isDraggingTask) return;
+    if (!state) return;
     saveStateDebounced(state);
   }, [state]);
 
   useEffect(() => {
-    document.title = `[tl] ${activeBoard?.name}`;
+    document.title = `🤪 – ${activeBoard?.name}`;
   }, [state?.activeBoardId]);
 
   const saveState = () => {
@@ -95,14 +94,14 @@ export const createBoardContext = (args?: { isDraggingTask?: boolean }) => {
       // Optionally clean up orphaned tasks
       if (removed) {
         const referenced = new Set<string>();
-        for (const bId of Object.keys(tasksByBoard)) {
-          const cols = tasksByBoard[bId];
+        for (const boardId of Object.keys(tasksByBoard)) {
+          const cols = tasksByBoard[boardId];
           (['backlog', 'inProgress', 'done'] as ColumnId[]).forEach((col) => {
-            cols[col].forEach((tid) => referenced.add(tid));
+            cols[col].forEach((taskId) => referenced.add(taskId));
           });
         }
         const tasks = Object.fromEntries(
-          Object.entries(prev.tasks).filter(([tid]) => referenced.has(tid)),
+          Object.entries(prev.tasks).filter(([taskId]) => referenced.has(taskId)),
         );
         const next: BoardState = {
           ...prev,
@@ -122,20 +121,23 @@ export const createBoardContext = (args?: { isDraggingTask?: boolean }) => {
     });
   }, []);
 
-  const createTask = useCallback((column: ColumnId, title: string, priority?: Priority) => {
-    setState((prev) => {
-      if (!prev || !prev.activeBoardId) return prev;
-      const id = generateId('task');
-      const task: Task = { id, title, priority, createdAt: Date.now() };
-      const tasks = { ...prev.tasks, [id]: task };
-      const tasksByBoard = { ...prev.tasksByBoard };
-      tasksByBoard[prev.activeBoardId] = {
-        ...tasksByBoard[prev.activeBoardId],
-        [column]: [...tasksByBoard[prev.activeBoardId][column], id],
-      };
-      return { ...prev, tasks, tasksByBoard };
-    });
-  }, []);
+  const createTask = useCallback(
+    (column: ColumnId, title: string, priority?: Priority, description?: string) => {
+      setState((prev) => {
+        if (!prev || !prev.activeBoardId) return prev;
+        const id = generateId('task');
+        const task: Task = { id, title, description, priority, createdAt: Date.now() };
+        const tasks = { ...prev.tasks, [id]: task };
+        const tasksByBoard = { ...prev.tasksByBoard };
+        tasksByBoard[prev.activeBoardId] = {
+          ...tasksByBoard[prev.activeBoardId],
+          [column]: [...tasksByBoard[prev.activeBoardId][column], id],
+        };
+        return { ...prev, tasks, tasksByBoard };
+      });
+    },
+    [],
+  );
 
   const updateTask = useCallback((id: string, updates: Partial<Omit<Task, 'id' | 'createdAt'>>) => {
     setState((prev) => {
@@ -160,9 +162,9 @@ export const createBoardContext = (args?: { isDraggingTask?: boolean }) => {
       const bId = prev.activeBoardId;
       const cols = prev.tasksByBoard[bId];
       const nextCols: Record<ColumnId, string[]> = {
-        backlog: cols.backlog.filter((tid) => tid !== id),
-        inProgress: cols.inProgress.filter((tid) => tid !== id),
-        done: cols.done.filter((tid) => tid !== id),
+        backlog: cols.backlog.filter((taskId) => taskId !== id),
+        inProgress: cols.inProgress.filter((taskId) => taskId !== id),
+        done: cols.done.filter((taskId) => taskId !== id),
       };
       return { ...prev, tasks, tasksByBoard: { ...prev.tasksByBoard, [bId]: nextCols } };
     });
